@@ -1,4 +1,4 @@
-name: Auto Job Reset
+name: Main Workflow
 
 on:
   push:
@@ -7,8 +7,6 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: '*/5 * * * *' # This cron expression means "every 30 minutes"
 
 jobs:
   build:
@@ -28,15 +26,25 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
-      run: |
-        npm install
+      run: npm install
 
     - name: Start application
-      run: |
-        nohup npm start &
-        echo $! > /tmp/app.pid # Save the process ID to a file
+      run: npm start
 
-    - name: Sleep and Stop Application
-      run: |
-        sleep 5m
-        kill $(cat /tmp/app.pid) # Kill the process using the saved PID
+    - name: Wait for 3 minutes
+      run: sleep 180
+
+    - name: Trigger next workflow
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const octokit = require('@actions/github').getOctokit(process.env.GITHUB_TOKEN);
+          const repo = process.env.GITHUB_REPOSITORY;
+          await octokit.rest.actions.createWorkflowDispatch({
+            owner: repo.split('/')[0],
+            repo: repo.split('/')[1],
+            workflow: 'trigger.yml',
+            ref: 'main'
+          });
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
