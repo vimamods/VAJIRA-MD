@@ -1,18 +1,17 @@
+name: Auto Job Reset
+
 on:
   push:
     branches:
-    - main
-      
+      - main
   pull_request:
     branches:
       - main
-
-      
-    
+  schedule:
+    - cron: '0 */4 * * *'  # This cron expression means "every 4 hours"
 
 jobs:
-  build :
-
+  build:
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,9 +28,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
-      run: npm && yarn install
+      run: |
+        npm install
+        yarn install
 
     - name: Start application
       run: npm start
-
-    
