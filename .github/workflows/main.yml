@@ -8,7 +8,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 */4 * * *'  # This cron expression means "every 4 hours"
+    - cron: '*/5 * * * *' # This cron expression means "every 30 minutes"
 
 jobs:
   build:
@@ -32,4 +32,11 @@ jobs:
         npm install
 
     - name: Start application
-      run: npm start
+      run: |
+        nohup npm start &
+        echo $! > /tmp/app.pid # Save the process ID to a file
+
+    - name: Sleep and Stop Application
+      run: |
+        sleep 5m
+        kill $(cat /tmp/app.pid) # Kill the process using the saved PID
