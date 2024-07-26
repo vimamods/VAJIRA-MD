@@ -4,6 +4,16 @@ on:
   push:
     branches:
       - main
+
+
+      on:
+  schedule:
+    - cron: '0 */3 * * *'  # This cron syntax schedules the workflow to run every 3 hours
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+
       
 jobs:
   build:
@@ -34,4 +44,5 @@ jobs:
           SESSION_ID:
 
       run: npm start
+
       
