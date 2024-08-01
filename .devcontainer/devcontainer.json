@@ -1,0 +1,9 @@
+{
+  "name": "My Project",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+  "settings": {},
+  "extensions": [],
+  "forwardPorts": [],
+  "postCreateCommand": "nohup sh -c 'while true; do npm start; sleep 7200; npm stop; done' &",
+  "remoteUser": "vscode"
+}
